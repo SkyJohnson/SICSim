@@ -6,7 +6,7 @@ namespace SICSim
     public partial class SicSimForm : Form
     {
         string a, x, l, pc; // variables for register values
-        string addr = "1000";   // starting memory address at 1000
+        string addr = 4096.ToString("X");   // starting memory address at 1000
         
         /// <summary>
         /// Initializing the form
@@ -45,22 +45,22 @@ namespace SICSim
                 if (dir == "WORD")
                 {
                     this.memView.Rows.Add(addr, label, value);      // update memory table
-                    this.addr = (Int32.Parse(addr) + 3).ToString();     // increment next memory address by 3 bytes 
+                    this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");     // increment next memory address by 3 bytes 
                 }
                 else if (dir == "BYTE")
                 {
                     this.memView.Rows.Add(addr, label, value);      // update memory table
-                    this.addr = (Int32.Parse(addr) + 1).ToString();     // increment next memory address by 1 byte
+                    this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + 1).ToString("X");     // increment next memory address by 1 byte
                 }
                 else if (dir == "RESB")
                 {
                     this.memView.Rows.Add(addr, label, "NULL");     // update memory table
-                    this.addr = (Int32.Parse(addr) + length).ToString();    // increment next memory address by given amount of bytes
+                    this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + length).ToString("X");    // increment next memory address by given amount of bytes
                 }
                 else if (dir == "RESW")
                 {
                     this.memView.Rows.Add(addr, label, "NULL");     // update memory table
-                    this.addr = (Int32.Parse(addr) + (3*length)).ToString();    // incremement next memory address by givn amount of words
+                    this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + (3*length)).ToString("X");    // incremement next memory address by givn amount of words
                 }
                 else
                 {
@@ -151,11 +151,72 @@ namespace SICSim
                             }
                         }
                         break;
+                    case "LDA":     // Load from memory to register A
+                        for (int i = 0; i < memView.Rows.Count; i++)
+                        {
+                            if (memView.Rows[i].Cells[1].Value.ToString().Contains(mem))
+                            {
+                                a = this.memView.Rows[i].Cells[2].Value.ToString();
+                                break;
+                            }
+                        }
+                        break;
+                    case "LDL":     // Load from memory to link register
+                        for (int i = 0; i < memView.Rows.Count; i++)
+                        {
+                            if (memView.Rows[i].Cells[1].Value.ToString().Contains(mem))
+                            {
+                                l = this.memView.Rows[i].Cells[2].Value.ToString();
+                                break;
+                            }
+                        }
+                        break;
+                    case "LDX":     // Load from memory to index register
+                        for (int i = 0; i < memView.Rows.Count; i++)
+                        {
+                            if (memView.Rows[i].Cells[1].Value.ToString().Contains(mem))
+                            {
+                                x = this.memView.Rows[i].Cells[2].Value.ToString();
+                                break;
+                            }
+                        }
+                        break;
+                    case "STA":     // store register A in memory
+                        for (int i = 0; i < memView.Rows.Count; i++)
+                        {
+                            if (memView.Rows[i].Cells[1].Value.ToString().Contains(mem))
+                            {
+                                this.memView.Rows[i].Cells[2].Value = a;
+                                break;
+                            }
+                        }
+                        break;
+                    case "STL":     // store link register in memory
+                        for (int i = 0; i < memView.Rows.Count; i++)
+                        {
+                            if (memView.Rows[i].Cells[1].Value.ToString().Contains(mem))
+                            {
+                                this.memView.Rows[i].Cells[2].Value = l;
+                                break;
+                            }
+                        }
+                        break;
+                    case "STX":     // store index register in memory
+                        for (int i = 0; i < memView.Rows.Count; i++)
+                        {
+                            if (memView.Rows[i].Cells[1].Value.ToString().Contains(mem))
+                            {
+                                this.memView.Rows[i].Cells[2].Value = x;
+                                break;
+                            }
+                        }
+                        break;
                     default: 
                         MessageBox.Show("Unsupported Instruction");
                         break;
                 }
                 // Update registers
+                pc = (Int32.Parse(pc) + 1).ToString();
                 this.regText.Text = $"Registers:\r\n\r\nA (Accum): {a}\r\n\r\nX (Index): {x}\r\n\r\nL (Link): {l}\r\n\r\nPC (Program Counter): {pc}";
             }
         }
