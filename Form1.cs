@@ -93,13 +93,12 @@ namespace SICSim
                     instr = instructions[1];    // Instruction
                     mem = instructions[2];      // Data memory label
                     this.memView.Rows.Add(pc, label, "instr");  // update memory table
-                    runInstr(label, instr, mem);
+                    runInstr(instr, mem);
                 }
                 else
                 {
                     MessageBox.Show("Invalid Instruction Format");
                 }
-
                 // Update registers
                 pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");  // increment program counter 1 word
                 this.regText.Text = $"Registers:\r\n\r\nA (Accum): {a}\r\n\r\nX (Index): {x}\r\n\r\nL (Link): {l}\r\n\r\nPC (Program Counter): {pc}";
@@ -107,7 +106,7 @@ namespace SICSim
         }
 
         /// <summary>
-        /// Handle instructions with no label
+        /// Handle instructions opcodes
         /// </summary>
         /// <param name="op"> Instruction Opcode </param>
         /// <param name="ta"> Target Address </param>
@@ -246,156 +245,6 @@ namespace SICSim
                         if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
                         {
                             pc = this.memView.Rows[i].Cells[0].Value.ToString();    // set program counter to target address
-                            break;
-                        }
-                    }
-                    break;
-                default:
-                    MessageBox.Show("Unsupported Instruction");
-                    break;
-            }
-        }
-        /// <summary>
-        /// Handles instructions with address labels
-        /// </summary>
-        /// <param name="label"> Address Label </param>
-        /// <param name="op"> Instruction Opcode </param>
-        /// <param name="ta"> Target Address </param>
-        private void runInstr(string label, string op, string ta)
-        {
-            switch (op)
-            {
-                case "RSUB":    // Return from subroutine
-                    pc = l;     // Sets program counter equal to link register
-                    break;
-                case "ADD":     // Add to register A
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        // Searches for label in memory table
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            // Have to convert from string to int to perform operation, then convert back to string to write back to register
-                            a = (Int32.Parse(a) + Int32.Parse(this.memView.Rows[i].Cells[2].Value.ToString())).ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "SUB":     // Subtract from register A
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            a = (Int32.Parse(a) - Int32.Parse(this.memView.Rows[i].Cells[2].Value.ToString())).ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "MUL":     // Multiply by register A
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            a = (Int32.Parse(a) * Int32.Parse(this.memView.Rows[i].Cells[2].Value.ToString())).ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "DIV":     // Divide by register A
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            a = (Int32.Parse(a) / Int32.Parse(this.memView.Rows[i].Cells[2].Value.ToString())).ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "AND":     // Bitwise AND of register A
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            a = (Int32.Parse(a) & Int32.Parse(this.memView.Rows[i].Cells[2].Value.ToString())).ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "OR":     // Bitwise OR of register A
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            a = (Int32.Parse(a) | Int32.Parse(this.memView.Rows[i].Cells[2].Value.ToString())).ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "LDA":     // Load from memory to register A
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            a = this.memView.Rows[i].Cells[2].Value.ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "LDL":     // Load from memory to link register
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            l = this.memView.Rows[i].Cells[2].Value.ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "LDX":     // Load from memory to index register
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            x = this.memView.Rows[i].Cells[2].Value.ToString();
-                            break;
-                        }
-                    }
-                    break;
-                case "STA":     // store register A in memory
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            this.memView.Rows[i].Cells[2].Value = a;
-                            break;
-                        }
-                    }
-                    break;
-                case "STL":     // store link register in memory
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            this.memView.Rows[i].Cells[2].Value = l;
-                            break;
-                        }
-                    }
-                    break;
-                case "STX":     // store index register in memory
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            this.memView.Rows[i].Cells[2].Value = x;
-                            break;
-                        }
-                    }
-                    break;
-                case "J":   // Jump to target address
-                    for (int i = 0; i < memView.Rows.Count; i++)
-                    {
-                        if (memView.Rows[i].Cells[1].Value.ToString().Contains(ta))
-                        {
-                            pc = this.memView.Rows[i].Cells[0].Value.ToString();
                             break;
                         }
                     }
