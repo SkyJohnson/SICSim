@@ -35,36 +35,40 @@ namespace SICSim
             // Loops through each line in data text box, splits each line into multiple strings, and updates memory table from each line
             foreach (string line in dataBox.Lines)
             {
-                string[] data = line.Split();
-                label = data[0];    // data memory label
-                dir = data[1];      // compiler directive
-                length = Int32.Parse(data[2]);  // amount of bytes or words to reserve in memory
-                value = Int32.Parse(data[2]);   // value to store in memory
+                line.Trim();
+                if (!string.IsNullOrEmpty(line))
+                {
+                    string[] data = line.Split();
+                    label = data[0];    // data memory label
+                    dir = data[1];      // compiler directive
+                    length = Int32.Parse(data[2]);  // amount of bytes or words to reserve in memory
+                    value = Int32.Parse(data[2]);   // value to store in memory
 
-                // Int32.Parse converts string to int to allow addition, must be converted back to string to be written to memory table
-                if (dir == "WORD")
-                {
-                    this.memView.Rows.Add(addr, label, value);      // update memory table
-                    this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");     // increment next memory address by 3 bytes 
-                }
-                else if (dir == "BYTE")
-                {
-                    this.memView.Rows.Add(addr, label, value);      // update memory table
-                    this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + 1).ToString("X");     // increment next memory address by 1 byte
-                }
-                else if (dir == "RESB")
-                {
-                    this.memView.Rows.Add(addr, label, "NULL");     // update memory table
-                    this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + length).ToString("X");    // increment next memory address by given amount of bytes
-                }
-                else if (dir == "RESW")
-                {
-                    this.memView.Rows.Add(addr, label, "NULL");     // update memory table
-                    this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + (3*length)).ToString("X");    // incremement next memory address by givn amount of words
-                }
-                else
-                {
-                    MessageBox.Show("Invalid Directve");    // SIC only supports BYTE, WORD, RESB, RESW, anything else throws and error, unless we want to implement and START and END directive
+                    // Int32.Parse converts string to int to allow addition, must be converted back to string to be written to memory table
+                    if (dir == "WORD")
+                    {
+                        this.memView.Rows.Add(addr, label, value);      // update memory table
+                        this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");     // increment next memory address by 3 bytes 
+                    }
+                    else if (dir == "BYTE")
+                    {
+                        this.memView.Rows.Add(addr, label, value);      // update memory table
+                        this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + 1).ToString("X");     // increment next memory address by 1 byte
+                    }
+                    else if (dir == "RESB")
+                    {
+                        this.memView.Rows.Add(addr, label, "NULL");     // update memory table
+                        this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + length).ToString("X");    // increment next memory address by given amount of bytes
+                    }
+                    else if (dir == "RESW")
+                    {
+                        this.memView.Rows.Add(addr, label, "NULL");     // update memory table
+                        this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + (3 * length)).ToString("X");    // incremement next memory address by givn amount of words
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid Directve");    // SIC only supports BYTE, WORD, RESB, RESW, anything else throws and error, unless we want to implement and START and END directive
+                    }
                 }
             }
         }
@@ -80,28 +84,33 @@ namespace SICSim
             // loops through each line of codeInput text box and splits into seperate strings for instructions and data labels
             foreach (string line in codeInput.Lines)
             {
-                string[] instructions = line.Split();
-                if (instructions.Length == 2)
+                line.Trim();
+                if (!string.IsNullOrEmpty(line))
                 {
-                    instr = instructions[0];    // Instruction
-                    mem = instructions[1];      // Data memory label
-                    runInstr(instr, mem);
+
+                    string[] instructions = line.Split();
+                    if (instructions.Length == 2)
+                    {
+                        instr = instructions[0];    // Instruction
+                        mem = instructions[1];      // Data memory label
+                        runInstr(instr, mem);
+                    }
+                    else if (instructions.Length == 3)
+                    {
+                        label = instructions[0];    // Instruction location label
+                        instr = instructions[1];    // Instruction
+                        mem = instructions[2];      // Data memory label
+                        this.memView.Rows.Add(pc, label, "instr");  // update memory table
+                        runInstr(instr, mem);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid Instruction Format");
+                    }
+                    // Update registers
+                    pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");  // increment program counter 1 word
+                    this.regText.Text = $"Registers:\r\n\r\nA (Accum): {a}\r\n\r\nX (Index): {x}\r\n\r\nL (Link): {l}\r\n\r\nPC (Program Counter): {pc}";
                 }
-                else if (instructions.Length == 3)
-                {
-                    label = instructions[0];    // Instruction location label
-                    instr = instructions[1];    // Instruction
-                    mem = instructions[2];      // Data memory label
-                    this.memView.Rows.Add(pc, label, "instr");  // update memory table
-                    runInstr(instr, mem);
-                }
-                else
-                {
-                    MessageBox.Show("Invalid Instruction Format");
-                }
-                // Update registers
-                pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");  // increment program counter 1 word
-                this.regText.Text = $"Registers:\r\n\r\nA (Accum): {a}\r\n\r\nX (Index): {x}\r\n\r\nL (Link): {l}\r\n\r\nPC (Program Counter): {pc}";
             }
         }
 
