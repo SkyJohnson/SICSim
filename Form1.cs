@@ -6,8 +6,9 @@ namespace SICSim
 {
     public partial class SicSimForm : Form
     {
-        string a, x, l, pc; // variables for register values
-        string startAddr;   // starting address of program
+        string a, x, l, b, s, t, f, pc; // variables for register values
+
+        string startAddr = 0.ToString("X");   // starting address of program (0 by default)
         Dictionary<string, string> locctr = new Dictionary<string, string>();   // dictionary for keeping track of addresses
 
         /// <summary>
@@ -20,8 +21,12 @@ namespace SICSim
             a = "0";
             x = "0";
             l = "0";
+            b = "0";
+            s = "0";
+            t = "0";
+            f = "0";
             pc = 0.ToString("X");   // prog counter in hex
-            this.regText.Text = $"Registers:\r\n\r\nA (Accum): {a}\r\n\r\nX (Index): {x}\r\n\r\nL (Link): {l}\r\n\r\nPC (Program Counter): {pc}";
+            this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
         }
 
         /// <summary>
@@ -39,66 +44,16 @@ namespace SICSim
             }
         }
 
-        // Not using this function anymore but saving some code for reuse
         /// <summary>
-        /// Handles updating the memory table when saveDataBtn is clicked
-        /// </summary>
-        /// <param name="sender"> Auto Generated </param>
-        /// <param name="e"> Auto Generated </param>
-        //private void saveDataBtn_Click(object sender, EventArgs e)
-        //{
-        //    string label, dir;  // String variables for data memory labels and compiler directives
-        //    int value, length;  // value for BYTE and WORD, length for RESB and RESW
-            
-        //    // Loops through each line in data text box, splits each line into multiple strings, and updates memory table from each line
-        //    foreach (string line in dataBox.Lines)
-        //    {
-        //        line.Trim();
-        //        if (!string.IsNullOrEmpty(line))
-        //        {
-        //            string[] data = line.Split();
-        //            label = data[0];    // data memory label
-        //            dir = data[1];      // compiler directive
-        //            length = Int32.Parse(data[2]);  // amount of bytes or words to reserve in memory
-        //            value = Int32.Parse(data[2]);   // value to store in memory
-
-        //            // Int32.Parse converts string to int to allow addition, must be converted back to string to be written to memory table
-        //            if (dir == "WORD")
-        //            {
-        //                this.memView.Rows.Add(addr, label, value);      // update memory table
-        //                this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");     // increment next memory address by 3 bytes 
-        //            }
-        //            else if (dir == "BYTE")
-        //            {
-        //                this.memView.Rows.Add(addr, label, value);      // update memory table
-        //                this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + 1).ToString("X");     // increment next memory address by 1 byte
-        //            }
-        //            else if (dir == "RESB")
-        //            {
-        //                this.memView.Rows.Add(addr, label, "NULL");     // update memory table
-        //                this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + length).ToString("X");    // increment next memory address by given amount of bytes
-        //            }
-        //            else if (dir == "RESW")
-        //            {
-        //                this.memView.Rows.Add(addr, label, "NULL");     // update memory table
-        //                this.addr = (Int32.Parse(addr, System.Globalization.NumberStyles.HexNumber) + (3 * length)).ToString("X");    // incremement next memory address by givn amount of words
-        //            }
-        //            else
-        //            {
-        //                MessageBox.Show("Invalid Directve");    // SIC only supports BYTE, WORD, RESB, RESW, anything else throws and error, unless we want to implement and START and END directive
-        //            }
-        //        }
-        //    }
-        //}
-
-        /// <summary>
-        /// Handles updating registers when instrBtn is clicked
+        /// Runs pass one of the assembler
+        /// Assigns addresses to each line of code using locctr dictionary and
+        /// populates memory table with labels and their corresponding addresses and values
         /// </summary>
         /// <param name="sender"> Auto Generated </param>
         /// <param name="e"> Auto Generated </param>
         private void instrBtn_Click(object sender, EventArgs e)
         {
-            string label, instr, mem;  // variables for instructions and data labels
+            string label, op, ta, r1, r2;  // variables for instructions and data labels
             int lineNum = 0;    // Keep track of line number for user debugging
             // loops through each line of codeInput text box and splits into seperate strings for instructions and data labels
             foreach (string line in codeInput.Lines)
@@ -110,45 +65,115 @@ namespace SICSim
                     string[] instructions = line.Split();
                     if (instructions.Length == 2)   // Instruction with no label
                     {
-                        instr = instructions[0];    // Instruction
-                        mem = instructions[1];      // Data memory label
+                        op = instructions[0];    // Instruction
+                        ta = instructions[1];      // Target address
                         // Need to check what format to determine next PC
-                        if (instr[instr.Length-1] == 'R')   // Format 2
+                        if (op[op.Length-1] == 'R' || op == "RMO")   // Format 2
                         {
-
+                            pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 2).ToString("X");  // PC increments 2 bytes
+                        }
+                        else
+                        {
+                            // assuming everything else is format 3
+                            pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");  // PC increments 3 bytes
                         }
                     }
-                    else if (instructions.Length == 3)  // Instruction with label
+                    else if (instructions.Length == 3)  // Format 3 with labels or format 2
                     {
-                        label = instructions[0];    // Instruction location label
-                        instr = instructions[1];    // Instruction
-                        mem = instructions[2];      // Data memory label
                         // Set starting address
-                        if (instr == "START")   
+                        if (instructions[1] == "START")
                         {
-                            startAddr = mem;
-                            pc = mem;
+                            startAddr = instructions[2];
+                            pc = instructions[2];
                             continue;   // skip to next iteration of loop
                         }
-                        // Need to check what format to determine next PC
-                        if (instr[instr.Length - 1] == 'R')   // Format 2
+                        string opOrLabel = instructions[0]; // intermediate var to determine if first part of string is address label or op for format 2 instruction
+                        if (opOrLabel == "RMO" || opOrLabel[opOrLabel.Length - 1] == 'R') // format 2
                         {
-
+                            op = opOrLabel;
+                            r1 = instructions[1];
+                            r2 = instructions[2];
+                            pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 2).ToString("X");  // PC increments by 2 bytes
                         }
-                        this.memView.Rows.Add(pc, label, mem);  // update memory table
+                        else
+                        {
+                            label = instructions[0];    // Instruction location label
+                            op = instructions[1];    // Instruction
+                            ta = instructions[2];      // Data memory label
+
+                            // Need to check what format to determine next PC
+                            if (op == "RESW")  // reserve word (3 bytes) in memory
+                            {
+                                this.memView.Rows.Add(pc, label, "NULL");  // update memory table
+                                pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 3 * Int32.Parse(ta, System.Globalization.NumberStyles.HexNumber)).ToString("X");  // PC increments by given bytes * 3
+                            }
+                            else if (op == "RESB")  // reserve byte in memory
+                            {
+                                this.memView.Rows.Add(pc, label, "NULL");  // update memory table
+                                pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + Int32.Parse(ta, System.Globalization.NumberStyles.HexNumber)).ToString("X");  // PC increments by given bytes
+                            }
+                            else if (op == "BYTE")
+                            {
+                                this.memView.Rows.Add(pc, label, ta);  // update memory table
+                                pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 1).ToString("X");  // PC increments 1 bytes
+                            }
+                            else if (op == "WORD")
+                            {
+                                this.memView.Rows.Add(pc, label, ta);  // update memory table
+                                pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");  // PC increments 3 bytes
+                            }
+                            else
+                            {
+                                // assuming everything else is format 3
+                                this.memView.Rows.Add(pc, label, $"{op} {ta}");  // update memory table
+                                pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 3).ToString("X");  // PC increments 3 bytes
+                            }
+                        }
+                    }
+                    else if (instructions.Length == 4)
+                    {
+                        // format 2 with labels
+                        label = instructions[0];    // Instruction location label
+                        op = instructions[1];   // Instruction
+                        r1 = instructions[2];   // register 1
+                        r2 = instructions[3];   // register 2
+                        this.memView.Rows.Add(pc, label, $"{op} {r1},{r2}");  // update memory table
+                        pc = (Int32.Parse(pc, System.Globalization.NumberStyles.HexNumber) + 2).ToString("X");  // PC increments 2 bytes
                     }
                     else
                     {
                         MessageBox.Show("Invalid Instruction Format");
                     }
                 }
-                Console.WriteLine(locctr);  // trying to test contents of location counter
+                /* This sections strictly for debugging purposes to verify correct values for locctr*/
+                foreach (KeyValuePair<string, string> pair in locctr)
+                {
+                    Console.WriteLine("Key = {0}, Value = {1}", pair.Key, pair.Value);
+                }
                 ++lineNum;  // increment line number
             }
         }
 
         /// <summary>
-        /// Handle instructions opcodes
+        /// Pass two
+        /// Looks up instruction in locctr at given value of PC
+        /// TOOD:
+        /// Split instruction into its opcode and target address or registers
+        /// Call runInstr to handle given operation (Need seperate functions for format 2 and format 3/4?)
+        /// How to determine end of instructions?
+        /// </summary>
+        /// <param name="addr"> program counter used to look up instruction in locctr </param>
+        private void lookupInstr(string addr)
+        {
+            locctr.TryGetValue(addr, out string instruction);   // same as string instruction = locctr[addr]
+        }
+
+        /// <summary>
+        /// Handles operation of given instruction based on given opcode and target address for format 3/4 instructions
+        /// TODO:
+        /// Implement rest of Jump and XE instructions
+        /// Update PC
+        /// Call lookupInstr at new PC
         /// </summary>
         /// <param name="op"> Instruction Opcode </param>
         /// <param name="ta"> Target Address </param>
