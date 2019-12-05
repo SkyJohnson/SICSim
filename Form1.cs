@@ -632,49 +632,49 @@ namespace SICSim
                     }
                     break;
                 case "CLEAR":   // Clear register
-                    if (ta == "a")
+                    if (ta == "A")
                     {
                         a = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "x")
+                    else if (ta == "X")
                     {
                         x = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "l")
+                    else if (ta == "L")
                     {
                         l = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "b")
+                    else if (ta == "B")
                     {
                         b = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "f")
+                    else if (ta == "F")
                     {
                         f = "0.0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "t")
+                    else if (ta == "T")
                     {
                         t = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "s")
+                    else if (ta == "S")
                     {
                         s = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "pc")
+                    else if (ta == "PC")
                     {
                         MessageBox.Show("Don't touch that. You will break everything.");
                     }
@@ -684,49 +684,49 @@ namespace SICSim
                     }
                     break;
                 case "TIXR":    // Increment X and compare with given register
-                    if (ta == "a")
+                    if (ta == "A")
                     {
                         a = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "x")
+                    else if (ta == "X")
                     {
                         x = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "l")
+                    else if (ta == "L")
                     {
                         l = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "b")
+                    else if (ta == "B")
                     {
                         b = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "f")
+                    else if (ta == "F")
                     {
                         f = "0.0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "t")
+                    else if (ta == "T")
                     {
                         t = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "s")
+                    else if (ta == "S")
                     {
                         s = "0";
                         // update registers
                         this.regText.Text = $"Registers:\r\n\r\n\r\n\r\n\r\nA (Accum): {a}\r\n\r\n\r\nX (Index): {x}\r\n\r\n\r\nL (Link): {l}\r\n\r\n\r\nB (Base): {b}\r\n\r\n\r\nS (General): {s}\r\n\r\n\r\nT (General): {t}\r\n\r\n\r\nF (Float): {f}\r\n\r\n\r\nPC (Program Counter): {pc}";
                     }
-                    else if (ta == "pc")
+                    else if (ta == "PC")
                     {
                         MessageBox.Show("Don't touch that. You will break everything.");
                     }
